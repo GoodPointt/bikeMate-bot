@@ -3,7 +3,7 @@ import { Chain } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
-export class BotService {
+export class ChainService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getChains(telegramId: string): Promise<Chain[]> {

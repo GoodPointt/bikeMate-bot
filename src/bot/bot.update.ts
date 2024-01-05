@@ -10,13 +10,8 @@ import {
 	Message,
 } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
-import { BotService } from './bot.service';
-import {
-	chainAddButton,
-	chainEditButtons,
-	chainMenuButtons,
-	menuButtons,
-} from './bot.buttons';
+import { ChainService } from './chain.service';
+import { chainEditButtons, menuButtons } from './bot.buttons';
 import { Context } from 'src/interfaces/context.interface';
 import { listChains } from './bot.utils';
 
@@ -24,7 +19,7 @@ import { listChains } from './bot.utils';
 export class BotUpdate {
 	constructor(
 		@InjectBot() private readonly bot: Telegraf<Context>,
-		private readonly botService: BotService,
+		private readonly chainService: ChainService,
 	) {}
 
 	@Start()
@@ -36,7 +31,7 @@ export class BotUpdate {
 	@Hears('⛓️Ланцюги')
 	async listChains(@Ctx() ctx: Context) {
 		const telegramId = ctx.from.id.toString();
-		const chains = await this.botService.getChains(telegramId);
+		const chains = await this.chainService.getChains(telegramId);
 		await ctx.deleteMessage();
 		await listChains(ctx, chains, true);
 	}
@@ -57,7 +52,10 @@ export class BotUpdate {
 			const telegramId = ctx.from.id.toString();
 			const chainId = parseInt(callbackData.split('_')[1], 10);
 
-			const openedChain = await this.botService.openChain(telegramId, chainId);
+			const openedChain = await this.chainService.openChain(
+				telegramId,
+				chainId,
+			);
 
 			if (openedChain) {
 				await ctx.reply(
@@ -68,7 +66,7 @@ export class BotUpdate {
 				);
 			} else {
 				await ctx.reply(`😔Не вдалося знайти ланцюг з ID ${chainId}.`);
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains, true);
 			}
 		}
@@ -78,7 +76,7 @@ export class BotUpdate {
 			const telegramId = ctx.from.id.toString();
 			const chainId = parseInt(callbackData.split('_')[1], 10);
 
-			const activatedChain = await this.botService.editChain(
+			const activatedChain = await this.chainService.editChain(
 				telegramId,
 				chainId,
 			);
@@ -87,13 +85,13 @@ export class BotUpdate {
 				await ctx.reply(`✅Ланцюг з ID ${chainId} встановлено.`);
 
 				const telegramId = ctx.from.id.toString();
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains);
 			} else {
 				await ctx.reply(`😔Не вдалось встановити ланцюг з ID ${chainId}.`);
 
 				const telegramId = ctx.from.id.toString();
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains);
 			}
 		}
@@ -111,18 +109,18 @@ export class BotUpdate {
 			const telegramId = ctx.from.id.toString();
 			const chainId = parseInt(callbackData.split('_')[1], 10);
 
-			const deletedChain = await this.botService.deleteChain(
+			const deletedChain = await this.chainService.deleteChain(
 				telegramId,
 				chainId,
 			);
 
 			if (deletedChain) {
 				await ctx.reply(`Ланцюг з ID ${chainId} видалено.`);
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains, true);
 			} else {
 				await ctx.reply(`Не вдалося видалити ланцюг з ID ${chainId}.`);
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains, true);
 			}
 		}
@@ -133,7 +131,7 @@ export class BotUpdate {
 		if (ctx.session.type === 'add_km') {
 			const numericMsg = parseInt(message, 10);
 			const { telegramId, chainId } = ctx.session;
-			const editedChain = await this.botService.editChain(
+			const editedChain = await this.chainService.editChain(
 				telegramId,
 				chainId,
 				numericMsg,
@@ -144,14 +142,14 @@ export class BotUpdate {
 			else {
 				await ctx.deleteMessage();
 				await ctx.reply(`✅Ланцюг з ID ${chainId} оновлено ➕${numericMsg}км.`);
-				const chains = await this.botService.getChains(telegramId);
+				const chains = await this.chainService.getChains(telegramId);
 				await listChains(ctx, chains);
 			}
 		}
 
 		if (ctx.session.type === 'add_chain') {
 			const telegramId = ctx.from.id;
-			const addedChain = await this.botService.addNewChain(
+			const addedChain = await this.chainService.addNewChain(
 				telegramId.toString(),
 				message.toString(),
 			);
@@ -161,7 +159,7 @@ export class BotUpdate {
 			else {
 				await ctx.deleteMessage();
 				await ctx.reply(`✅Ланцюг ${message} успішно додано`);
-				const chains = await this.botService.getChains(telegramId.toString());
+				const chains = await this.chainService.getChains(telegramId.toString());
 				await listChains(ctx, chains, true);
 			}
 		}

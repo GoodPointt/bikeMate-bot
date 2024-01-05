@@ -8,9 +8,7 @@ export function menuButtons() {
 			Markup.button.callback('🌦️Погода', 'weather'),
 		],
 		{ columns: 2 },
-	)
-		.resize()
-		.oneTime();
+	).resize();
 }
 
 export function chainEditButtons(id: number | string) {
