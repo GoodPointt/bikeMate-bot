@@ -6,4 +6,5 @@ export interface Context extends ContextTelegraf {
 		telegramId?: string;
 		type?: 'add_km' | 'add_chain';
 	};
+	message: any;
 }

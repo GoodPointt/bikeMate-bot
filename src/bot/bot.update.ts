@@ -10,16 +10,19 @@ import {
 	Message,
 } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
-import { ChainService } from './chain.service';
-import { chainEditButtons, menuButtons } from './bot.buttons';
+import { ChainService } from './chain/chain.service';
+import { chainEditButtons, locationButton, menuButtons } from './bot.buttons';
 import { Context } from 'src/interfaces/context.interface';
 import { listChains } from './bot.utils';
+import { WeatherService } from './weather/weather.service';
+import { handleWeatherCode } from './weather/waeather.utils';
 
 @Update()
 export class BotUpdate {
 	constructor(
 		@InjectBot() private readonly bot: Telegraf<Context>,
 		private readonly chainService: ChainService,
+		private readonly waetherService: WeatherService,
 	) {}
 
 	@Start()
@@ -28,6 +31,37 @@ export class BotUpdate {
 		await ctx.reply('🚴Що робимо?', menuButtons());
 	}
 
+	//WAETHER
+	@Hears('🔙Назад до меню')
+	async backToMenu(@Ctx() ctx: Context) {
+		await ctx.reply('🚴Що робимо?', menuButtons());
+	}
+	@Hears('🌦️Погода')
+	async askLocation(@Ctx() ctx: Context) {
+		await ctx.reply('Де ти є❔', locationButton());
+	}
+	@On('location')
+	async handleLocation(@Ctx() ctx: Context) {
+		const location = ctx.message?.location;
+
+		if (location) {
+			const data = await this.waetherService.getWeatherLocationCoord(location);
+			await ctx.reply(
+				`✨ ${data.timezone}
+      \n${handleWeatherCode(data.current_weather.weathercode)}
+      \n🌡️ ${data.current_weather.temperature} ${
+				data.hourly_units.temperature_2m
+			}
+      \n💨 ${data.current_weather.windspeed} ${
+				data.hourly_units.windspeed_10m
+			}`,
+			);
+		} else {
+			console.log('Location data not found in the message.');
+		}
+	}
+
+	//CHAINS
 	@Hears('⛓️Ланцюги')
 	async listChains(@Ctx() ctx: Context) {
 		const telegramId = ctx.from.id.toString();

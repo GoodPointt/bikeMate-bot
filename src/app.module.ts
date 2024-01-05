@@ -5,6 +5,7 @@ import { BotModule } from './bot/bot.module';
 import { TasksService } from './cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HealthController } from './health/health.controller';
+import { WeatherService } from './bot/weather/weather.service';
 
 @Module({
 	imports: [ConfigModule.forRoot(), ScheduleModule.forRoot(), BotModule],

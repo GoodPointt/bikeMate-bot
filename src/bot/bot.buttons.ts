@@ -25,11 +25,18 @@ export function chainAddButton() {
 	return Markup.inlineKeyboard([Markup.button.callback('➕Додати', 'add')]);
 }
 
+export function locationButton() {
+	return Markup.keyboard([
+		Markup.button.locationRequest('🌎Пошерити локацію') as any,
+		Markup.button.callback('🔙Назад до меню', 'menu'),
+	]).resize();
+}
+
 export function chainMenuButtons(chains: Chain[]) {
 	return Markup.inlineKeyboard(
 		chains.map(({ id, chainTitle, km, isCurrent }) =>
 			Markup.button.callback(
-				`${isCurrent ? '🟢' : '⭕'} {${id}} ${chainTitle} [${km}км]`.trim(),
+				`${isCurrent ? '🟢' : '⭕'} {ID:${id}} ${chainTitle} [${km}км]`.trim(),
 				`open_${id.toString()}`,
 			),
 		),

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotUpdate } from './bot.update';
-import { ChainService } from './chain.service';
+import { ChainService } from './chain/chain.service';
 import { PrismaService } from 'src/prisma.service';
 import * as LocalSession from 'telegraf-session-local';
+import { WeatherService } from './weather/weather.service';
 
 const sessions = new LocalSession({
 	database: 'session_db.json',
@@ -16,6 +17,6 @@ const sessions = new LocalSession({
 			token: process.env.BOT_API_TOKEN,
 		}),
 	],
-	providers: [BotUpdate, ChainService, PrismaService],
+	providers: [BotUpdate, ChainService, PrismaService, WeatherService],
 })
 export class BotModule {}
