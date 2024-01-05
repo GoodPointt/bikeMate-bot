@@ -27,8 +27,10 @@ export class BotUpdate {
 
 	@Start()
 	async start(@Ctx() ctx: Context) {
-		await ctx.reply(`👋Вітаю, друже ${ctx.from.first_name}!`);
-		await ctx.reply('🚴Що робимо?', menuButtons());
+		await ctx.reply(
+			`👋Вітаю, друже ${ctx.from.first_name}! \n\n🚴Що робимо?`,
+			menuButtons(),
+		);
 	}
 
 	//WAETHER
@@ -67,7 +69,7 @@ export class BotUpdate {
 		const telegramId = ctx.from.id.toString();
 		const chains = await this.chainService.getChains(telegramId);
 		await ctx.deleteMessage();
-		await listChains(ctx, chains, true);
+		await listChains(ctx, chains);
 	}
 
 	//NEW CHAIN
@@ -80,6 +82,12 @@ export class BotUpdate {
 	@On('callback_query')
 	async handleEditButton(@Ctx() ctx: Context) {
 		const callbackData = (ctx.update as any)?.callback_query?.data;
+
+		const msgId = ctx.update?.callback_query?.message?.message_id;
+
+		if (msgId) {
+			await ctx.telegram.deleteMessage(ctx.chat!.id, msgId);
+		}
 
 		//OPEN ONE
 		if (callbackData && callbackData.startsWith('open_')) {
@@ -101,7 +109,7 @@ export class BotUpdate {
 			} else {
 				await ctx.reply(`😔Не вдалося знайти ланцюг з ID ${chainId}.`);
 				const chains = await this.chainService.getChains(telegramId);
-				await listChains(ctx, chains, true);
+				await listChains(ctx, chains);
 			}
 		}
 
@@ -151,11 +159,11 @@ export class BotUpdate {
 			if (deletedChain) {
 				await ctx.reply(`Ланцюг з ID ${chainId} видалено.`);
 				const chains = await this.chainService.getChains(telegramId);
-				await listChains(ctx, chains, true);
+				await listChains(ctx, chains);
 			} else {
 				await ctx.reply(`Не вдалося видалити ланцюг з ID ${chainId}.`);
 				const chains = await this.chainService.getChains(telegramId);
-				await listChains(ctx, chains, true);
+				await listChains(ctx, chains);
 			}
 		}
 	}
@@ -194,7 +202,7 @@ export class BotUpdate {
 				await ctx.deleteMessage();
 				await ctx.reply(`✅Ланцюг ${message} успішно додано`);
 				const chains = await this.chainService.getChains(telegramId.toString());
-				await listChains(ctx, chains, true);
+				await listChains(ctx, chains);
 			}
 		}
 	}

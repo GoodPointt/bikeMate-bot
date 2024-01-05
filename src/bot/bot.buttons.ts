@@ -33,13 +33,14 @@ export function locationButton() {
 }
 
 export function chainMenuButtons(chains: Chain[]) {
-	return Markup.inlineKeyboard(
-		chains.map(({ id, chainTitle, km, isCurrent }) =>
-			Markup.button.callback(
-				`${isCurrent ? '🟢' : '⭕'} {ID:${id}} ${chainTitle} [${km}км]`.trim(),
-				`open_${id.toString()}`,
-			),
+	const buttons = chains.map(({ id, chainTitle, km, isCurrent }) =>
+		Markup.button.callback(
+			`${isCurrent ? '🟢' : '⭕'} {ID:${id}} ${chainTitle} [${km}км]`.trim(),
+			`open_${id.toString()}`,
 		),
-		{ columns: 1 },
 	);
+
+	buttons.push(Markup.button.callback('➕Додати', 'add'));
+
+	return Markup.inlineKeyboard(buttons, { columns: 1 });
 }
