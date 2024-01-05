@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reputation {
+	id Int @default(autoincrement()) @id
+	telegramId String
+	username String
+	fullname String
+	reputation Int @default(0)
+	userAvatar String
+}
+
+model Chain {
+		id Int @default(autoincrement()) @id
+		chainTitle String
+		km Int @default(0)
+		isCurrent Boolean @default(false)
+		telegramId String
+}

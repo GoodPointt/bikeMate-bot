@@ -1,0 +1,13 @@
+{
+  "sessions": [
+    {
+      "id": "211288787:211288787",
+      "data": {
+        "telegramId": "211288787",
+        "chainId": 7,
+        "type": "add_chain",
+        "__scenes": {}
+      }
+    }
+  ]
+}
