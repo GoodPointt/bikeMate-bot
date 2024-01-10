@@ -35,7 +35,6 @@ export class BotUpdate {
 
 	async sendMessage(message: string) {
 		const groupId = process.env.GROUP_ID;
-		console.log(groupId);
 		try {
 			await this.bot.telegram.sendMessage(groupId, message);
 		} catch (error) {
