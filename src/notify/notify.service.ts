@@ -10,7 +10,7 @@ export class NotifyService {
 	async notifyMessage(dto: NotificationDto) {
 		const message = `Received new letter from: 
 		\n🙂name: ${dto.name}
-		\n📧email: ${dto.email}
+		\n📧email: ${dto.phone}
 		`;
 		return await this.botUpdate.sendMessage(message);
 	}
