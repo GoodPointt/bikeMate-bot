@@ -33,6 +33,16 @@ export class BotUpdate {
 		);
 	}
 
+	async sendMessage(message: string) {
+		const groupId = process.env.GROUP_ID;
+		console.log(groupId);
+		try {
+			await this.bot.telegram.sendMessage(groupId, message);
+		} catch (error) {
+			console.error('Error sending message:', error);
+		}
+	}
+
 	//WAETHER
 	@Hears('🔙Назад до меню')
 	async backToMenu(@Ctx() ctx: Context) {

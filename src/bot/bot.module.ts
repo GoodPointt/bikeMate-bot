@@ -15,8 +15,10 @@ const sessions = new LocalSession({
 		TelegrafModule.forRoot({
 			middlewares: [sessions.middleware()],
 			token: process.env.BOT_API_TOKEN,
+			options: { groupId: process.env.GROUP_ID } as any,
 		}),
 	],
 	providers: [BotUpdate, ChainService, PrismaService, WeatherService],
+	exports: [BotUpdate],
 })
 export class BotModule {}

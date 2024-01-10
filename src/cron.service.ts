@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { HealthService } from './health/health.service';
+import { NotifyService } from './notify/notify.service';
 
 @Injectable()
-export class TasksService extends HealthService {
+export class TasksService extends NotifyService {
 	@Cron('*/14 * * * *')
 	async handleCron() {
-		const health = await this.checkHealth();
-		console.log(health);
+		const notify = await this.checkNotify();
+		console.log(notify);
 	}
 }
